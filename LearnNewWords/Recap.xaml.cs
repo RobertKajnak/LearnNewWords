@@ -34,6 +34,12 @@ namespace LearnNewWords
             this.Loaded += delegate { this.Focus(FocusState.Programmatic); };
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.BackAction();

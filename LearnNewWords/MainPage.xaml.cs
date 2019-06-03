@@ -63,7 +63,7 @@ namespace LearnNewWords
             
             if (file != null)
             {
-                var handler = new ConceptHandler(file.Name);
+                var handler = new ConceptHandler(file);
             }
             else
             {

@@ -6,30 +6,54 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using Windows.Storage;
 
 namespace LearnNewWords
 {
     class ConceptHandler
     {
-        private readonly string filename;
-        private readonly XElement words;
+        private readonly StorageFile file;
+        private XElement words;
 
-        public ConceptHandler(string filename)
+        /// <summary>
+        /// ReadXML should be called separately
+        /// </summary>
+        /// <param name="file"></param>
+        public ConceptHandler(StorageFile file)
         {
-            this.filename = filename;
+            this.file = file;
+        }
+
+        public async Task ReadXML()
+        {
             try
             {
-                 words = XElement.Load(filename);
+                using (var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read))
+                {
+                    words = XElement.Load(WindowsRuntimeStreamExtensions.AsStreamForRead(stream));
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 words = new XElement("Words");
+                MiscFunctions.MessageBox("Error reading file", ex.Message);
+                try
+                {
+
+                }
+                catch (Exception createException)
+                {
+                    MiscFunctions.MessageBox("Could not create new file", createException.Message);
+                }
             }
         }
 
         public void Add(Concept concept)
         {
-            words.Add(new XElement(concept.Question, concept.Answers));
+            words.Add(new XElement("Concept", 
+                new XElement("question", concept.Question),
+                new XElement("anwer", concept.Answers))
+                );
         }
 
         public List<Concept> GetAllConcepts()
@@ -47,12 +71,19 @@ namespace LearnNewWords
             return concepts;
         }
 
-        public void SaveChanges()
+        public async void SaveChanges()
         {
-            using (FileStream DestinationStream = File.Create(this.filename))
+            /*using (FileStream DestinationStream = File.Create(this.filename))
             {
                 this.words.Save(DestinationStream);
+            }*/
+
+            //Stream stream = await file.OpenStreamForWriteAsync();
+            using (var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite))
+            {
+                this.words.Save(WindowsRuntimeStreamExtensions.AsStreamForWrite(stream));
             }
+            
         }
     }
 }

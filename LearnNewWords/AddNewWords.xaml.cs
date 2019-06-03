@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -28,9 +30,36 @@ namespace LearnNewWords
         {
             this.InitializeComponent();
 
-            this.handler = new ConceptHandler("Data/default.cpt");
-            this.concepts = handler.GetAllConcepts();
-            RefreshExistingWordList();
+
+            LockFile();
+        }
+
+        private async void LockFile()
+        {
+            
+            //
+
+            Windows.Storage.StorageFolder folder = ApplicationData.Current.LocalFolder;
+            StorageFile file = null;
+            try
+            {
+                file = await folder.GetFileAsync("default.cpt");
+            }
+            catch 
+            {
+                file = await folder.CreateFileAsync(desiredName: "default.cpt");//, options: CreationCollisionOption.ReplaceExisting);
+            }
+            finally
+            {
+
+                this.handler = new ConceptHandler(file);
+
+                await handler.ReadXML();
+                this.concepts = handler.GetAllConcepts();
+                RefreshExistingWordList();
+            }
+            
+            //this.handler = new ConceptHandler(Path.Combine(installedLocation.Path,"default.cpt"));
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -39,17 +68,20 @@ namespace LearnNewWords
             this.Loaded += delegate { this.Focus(FocusState.Programmatic); };
         }
 
-        private async void AddWord()
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+
+            base.OnNavigatedFrom(e);
+
+        }
+
+        private void AddWord()
         {
             if ((this.TextBoxAnswer.Text.Length < 1 || this.TextBoxQuestion.Text.Length < 1)
                 || (this.TextBoxAnswer.Text.Equals("Answer") || this.TextBoxQuestion.Text.Equals("Question")))
             {
-                await new ContentDialog()
-                {
-                    Title = "Field left empty",
-                    Content = "Both Question and Answer need to be filled in",
-                    CloseButtonText = "Ok"
-                }.ShowAsync();
+                MiscFunctions.MessageBox("Field Left Empty", "Both Question and Answer need to be filled in");
             }
             else
             {
@@ -86,7 +118,22 @@ namespace LearnNewWords
 
         private void BackAction()
         {
+
+            this.handler.SaveChanges();
             this.Frame.GoBack();
+            /*System.Threading.Tasks.Task.Run(() => {
+                try
+                {
+                }
+                catch (Exception ex)
+                {
+                    Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () => {
+                        MiscFunctions.MessageBox("Unexpected Error Occured", ex.Message);
+                    });
+                }
+
+            });*/
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
