@@ -85,9 +85,17 @@ namespace LearnNewWords
             }
             else
             {
-                var nc = new Concept(TextBoxQuestion.Text, TextBoxAnswer.Text);
-                this.concepts.Add(nc);
-                this.handler.Add(nc);
+                if (!concepts.Exists(x => x.Question.Equals(TextBoxQuestion.Text)))
+                {
+                    var nc = new Concept(TextBoxQuestion.Text, TextBoxAnswer.Text);
+                    this.concepts.Add(nc);
+                    this.handler.Add(nc);
+                }
+                else
+                {
+                    MiscFunctions.MessageBox("Question already exists", "Remove existing quesiton first. It would cause ambiguity otherwise");
+                }
+
                 RefreshExistingWordList();
             }
         }
@@ -97,13 +105,57 @@ namespace LearnNewWords
             AddWord();
         }
 
+        private void DeleteSelectedWord()
+        {
+            //MiscFunctions.MessageBox("", ((TextBlock)ListView_Concepts.SelectedItem).Text.ToString());
+            if (ListView_Concepts.SelectedItem != null)
+            {
+                string question = ((TextBlock)ListView_Concepts.SelectedItem).Text;
+                handler.Remove(question);
+                this.concepts.RemoveAll(x => x.Question.Equals(question));
+                RefreshExistingWordList();
+            }
+            else
+            {
+                MiscFunctions.MessageBox("Error", "No item selected");
+            }
+        }
+
         private void RefreshExistingWordList()
         {
-            ListView_Concepts.Items.Clear();
+            
+            var noLongerExist = new List<TextBlock>();
+            foreach (TextBlock block in ListView_Concepts.Items)
+            {
+                if (!concepts.Exists(x=>x.Question.Equals(block.Text)))
+                {
+                    noLongerExist.Add(block);
+                }
+            }
+            foreach (var item in noLongerExist)
+            {
+                ListView_Concepts.Items.Remove(item);
+            }
+
+            var conceptsToAdd = new List<Concept>();
+            foreach (var concept in concepts)
+            {
+                if (!ListView_Concepts.Items.ToList().Exists(x =>((TextBlock)x).Text.Equals(concept.Question)))
+                {
+                    conceptsToAdd.Add(concept);
+                }
+            }
+            foreach (var concept in conceptsToAdd)
+            {
+                ListView_Concepts.Items.Add(new TextBlock() { Text = concept.Question });
+            }
+
+            
+            /*ListView_Concepts.Items.Clear();
             foreach (var w in this.concepts)
             {
                 ListView_Concepts.Items.Add(new TextBlock() {Text= w.Question });
-            }
+            }*/
         }
 
         private void Grid_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -112,6 +164,7 @@ namespace LearnNewWords
             {
                 case Windows.System.VirtualKey.Enter: AddWord(); break;
                 case Windows.System.VirtualKey.Escape: BackAction(); break;
+                case Windows.System.VirtualKey.Delete: DeleteSelectedWord(); break;
                 default: break;
             }
         }
@@ -140,10 +193,37 @@ namespace LearnNewWords
         {
             this.BackAction();   
         }
-
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        
+        private void Button_DeleteConcept_Click(object sender, RoutedEventArgs e)
         {
+            DeleteSelectedWord();
+        }
 
+        private void Button_ShowAnswer_Click(object sender, RoutedEventArgs e)
+        {
+            string question = ((TextBlock)ListView_Concepts.SelectedItem).Text;
+            var concept = concepts.Find(x => x.Question.Equals(question));
+            string answers = "";
+            foreach (string asnwer in concept.Answers)
+            {
+                answers += asnwer + '\n';
+            }
+            MiscFunctions.MessageBox(concept.Question, answers);
+        }
+
+        private void ListView_Concepts_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (((ListView)sender).SelectedItem == null)
+            {
+                Button_ShowAnswer.IsEnabled = false;
+                Button_DeleteConcept.IsEnabled = false;
+            }
+            else
+            {
+                Button_ShowAnswer.IsEnabled = true;
+                Button_DeleteConcept.IsEnabled = true;
+
+            }
         }
     }
 }

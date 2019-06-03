@@ -9,13 +9,17 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBox Name="TextBoxQuestion" HorizontalAlignment="Center" Margin="0,187,0,0" Text="Question" VerticalAlignment="Top" Height="75" Width="226"/>
-        <TextBox Name="TextBoxAnswer" HorizontalAlignment="Center" Margin="0,351,0,0" Text="Answer" VerticalAlignment="Top" Height="111" Width="234"/>
+        <TextBox Name="TextBoxQuestion" HorizontalAlignment="Center" Margin="0,187,0,0" PlaceholderText="Question" VerticalAlignment="Top" Height="75" Width="226"/>
+        <TextBox Name="TextBoxAnswer" HorizontalAlignment="Center" Margin="0,351,0,0" PlaceholderText="Answer" VerticalAlignment="Top" Height="111" Width="234"/>
         <Button Content="Add" HorizontalAlignment="Center" Margin="0,569,0,0" VerticalAlignment="Top" Click="Add_new_word_Click"/>
         <ListView Name="ListView_Concepts" HorizontalAlignment="Center" Height="78" Margin="0,50,0,0" VerticalAlignment="Top" Width="350"
-                  Background="DarkBlue"/>
+                  Background="DarkBlue" SelectionChanged="ListView_Concepts_SelectionChanged"/>
         <Button FontFamily="Marlett" FontSize="20" Content="3" HorizontalAlignment="Left" VerticalAlignment="Top" Click="BackButton_Click"
             ToolTipService.ToolTip="Esc" AutomationProperties.AcceleratorKey="Escape"/>
+        <Button Name="Button_DeleteConcept" Content="Remove" HorizontalAlignment="Center" Margin="270,133,0,0" VerticalAlignment="Top" 
+                IsEnabled="False" Click="Button_DeleteConcept_Click"/>
+        <Button Name="Button_ShowAnswer" Content="Show Answer" HorizontalAlignment="Center" Margin="-220,133,0,0" VerticalAlignment="Top" 
+                IsEnabled="False" Click="Button_ShowAnswer_Click"/>
 
     </Grid>
 </Page>

@@ -56,6 +56,14 @@ namespace LearnNewWords
                 );
         }
 
+        public void Remove(string question)
+        {
+            var nodes = words.Elements().Where(x => x.Element("question").Value.Equals(question)).ToList();
+
+            foreach (var node in nodes)
+                node.Remove();
+        }
+
         public List<Concept> GetAllConcepts()
         {
             var concepts = new List<Concept>();
@@ -79,6 +87,7 @@ namespace LearnNewWords
             }*/
 
             //Stream stream = await file.OpenStreamForWriteAsync();
+            await FileIO.WriteTextAsync(file, "");
             using (var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite))
             {
                 this.words.Save(WindowsRuntimeStreamExtensions.AsStreamForWrite(stream));
