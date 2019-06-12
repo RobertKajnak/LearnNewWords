@@ -52,7 +52,8 @@ namespace LearnNewWords
         {
             words.Add(new XElement("Concept", 
                 new XElement("question", concept.Question),
-                new XElement("anwer", concept.Answers))
+                new XElement("anwer", concept.Answers),
+                new XElement("score",concept.Score))
                 );
         }
 
@@ -74,7 +75,12 @@ namespace LearnNewWords
                 {
                     answers.Add(e.Value);
                 }
-                concepts.Add(new Concept(elem.Element("question").Value, answers ));
+                var score = elem.Element("score");
+                int conceptScore = 0;
+                if (score != null)
+                    conceptScore = (int)score;
+                concepts.Add(new Concept(elem.Element("question").Value, answers, conceptScore));
+                
             }
             return concepts;
         }

@@ -10,11 +10,46 @@
 
 
     <Grid KeyDown="Grid_KeyDown">
-        <TextBlock Name="pageTitle"  HorizontalAlignment="Center" Margin="0,137,0,0" Text="Recap" TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Center" Text="TextBox" VerticalAlignment="Center" Width="266" Height="115"/>
+        <TextBlock Name="TextBlock_Question"  HorizontalAlignment="Center" Margin="0,72,0,0" Text="Question_Placeholdder" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Center" PlaceholderText="Your Answer Here" VerticalAlignment="Center" Width="286" Height="119" Margin="0,0,0,0"/>
 
         <Button FontFamily="Marlett" FontSize="20" Content="3" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click"
                 ToolTipService.ToolTip="Esc" AutomationProperties.AcceleratorKey="Escape"/>
+        <ListView Name="ListView_CorrectAnswers" HorizontalAlignment="Center" Height="121" Margin="0,135,0,0" VerticalAlignment="Top" Width="266"/>
 
+        <Button Name="Button_CheckCorrect" HorizontalAlignment="Center" Margin="0,527,0,0" VerticalAlignment="Top" Width="91" Height="63" Click="Button_CheckCorrect_Click">
+            <TextBlock Text="Check" TextWrapping="Wrap" TextAlignment="Center" FontSize="24"/>
+        </Button>
+
+        <Button Name="Button_ForceIncorrect" HorizontalAlignment="Center" Margin="220,520,0,0" VerticalAlignment="Top" Height="75" Width="91" 
+                IsEnabled="False" Visibility="Collapsed">
+            <TextBlock Text="Force Incorrect (i)" TextWrapping="Wrap" TextAlignment="Center"/>
+        </Button>
+        <Button Name="Button_ForceCorrect" HorizontalAlignment="Center" Margin="-220,521,0,0" VerticalAlignment="Top" Height="74" Width="82" 
+                IsEnabled="False" Visibility="Collapsed">
+            <TextBlock Text="Force Correct (c)" TextWrapping="Wrap" TextAlignment="Center"/>
+        </Button>
+
+        <Button x:Name="Button_Next" HorizontalAlignment="Center" Margin="0,527,0,0" VerticalAlignment="Top" Width="91" Height="63" Visibility="Collapsed" IsEnabled="False" Click="Button_Next_Click">
+            <TextBlock Text="Next" TextWrapping="Wrap" TextAlignment="Center" FontSize="24"/>
+        </Button>
+
+        <SplitView Name="SplitView_Settings" IsPaneOpen="False" DisplayMode="Overlay" OpenPaneLength="296" PanePlacement="Right">
+            <SplitView.Pane>
+                <StackPanel>
+                    <StackPanel x:Name="Panel_WordOrder" Margin="0,10,0,0">
+                        <TextBlock Text="Word order" FontSize="22" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <RadioButton Tag="Intelligent" Checked="OnWordOrderChecked" Content="Intelligent" />
+                        <RadioButton Tag="Random" Checked="OnWordOrderChecked" Content="Random" />
+                        <RadioButton Tag="Sequential" Checked="OnWordOrderChecked" Content="Sequential" />
+                    </StackPanel>
+                </StackPanel>
+            </SplitView.Pane>
+
+
+        </SplitView>
+        <Button Name="Button_Settings" HorizontalAlignment="Right" Margin="389,0,0,0" VerticalAlignment="Top" Width="43" Click="Button_Settings_Click">
+            <SymbolIcon Symbol="Setting"/>
+        </Button>
     </Grid>
 </Page>

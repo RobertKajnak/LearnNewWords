@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 
 namespace LearnNewWords
 {
-    class Concept
+    public class Concept
     {
         private readonly string question;
         private readonly List<string> answers;
+        private readonly int score;
         public bool caseSensitive = false;
 
         public List<string> Answers => answers;
         public string Question => question;
 
-        public Concept(string question, IEnumerable<string> answers)
+        public int Score => score;
+
+        public Concept(string question, IEnumerable<string> answers, int score=0)
         {
             this.question = question;
 
@@ -24,15 +27,19 @@ namespace LearnNewWords
             {
                 this.answers.Add(s);
             }
+
+            this.score = score;
         }
 
-        public Concept(string question, string answer)
+        public Concept(string question, string answer, int score=0)
         {
             this.question = question;
             this.answers = new List<string>
             {
                 answer
             };
+
+            this.score = score;
         }
 
 
