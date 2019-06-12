@@ -30,48 +30,32 @@ namespace LearnNewWords
         {
             this.InitializeComponent();
 
-
-            LockFile();
-        }
-
-        private async void LockFile()
-        {
-            
-            //
-
-            Windows.Storage.StorageFolder folder = ApplicationData.Current.LocalFolder;
-            StorageFile file = null;
-            try
-            {
-                file = await folder.GetFileAsync("default.cpt");
-            }
-            catch 
-            {
-                file = await folder.CreateFileAsync(desiredName: "default.cpt");//, options: CreationCollisionOption.ReplaceExisting);
-            }
-            finally
-            {
-
-                this.handler = new ConceptHandler(file);
-
-                await handler.ReadXML();
-                this.concepts = handler.GetAllConcepts();
-                RefreshExistingWordList();
-            }
-            
-            //this.handler = new ConceptHandler(Path.Combine(installedLocation.Path,"default.cpt"));
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+
+
+            if (e.Parameter is ConceptHandler)
+            {
+                this.handler = (ConceptHandler)e.Parameter;
+                this.concepts = handler.GetAllConcepts();
+                RefreshExistingWordList();
+            }
+            else
+            {
+                MiscFunctions.MessageBox("Unexpected Error", "Invalid concept list. Returning to main menu");
+                this.Frame.GoBack();
+            }
+
+
             this.Loaded += delegate { this.Focus(FocusState.Programmatic); };
         }
 
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-
             base.OnNavigatedFrom(e);
 
         }

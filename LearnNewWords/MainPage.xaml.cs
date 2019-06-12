@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -22,20 +24,47 @@ namespace LearnNewWords
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private ConceptHandler handler;
+
         public MainPage()
         {
             this.InitializeComponent();
+
+            if (handler == null)
+                LockFile();
+        }
+
+        private async void LockFile()
+        {
+            Windows.Storage.StorageFolder folder = ApplicationData.Current.LocalFolder;
+            StorageFile file = null;
+            try
+            {
+                file = await folder.GetFileAsync("default.cpt");
+            }
+            catch
+            {
+                file = await folder.CreateFileAsync(desiredName: "default.cpt");//, options: CreationCollisionOption.ReplaceExisting);
+            }
+            finally
+            {
+                this.handler = new ConceptHandler(file);
+                await handler.ReadXML();
+            }
+
+            //this.handler = new ConceptHandler(Path.Combine(installedLocation.Path,"default.cpt"));
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+            this.Hyperlink_Folder.Content = ApplicationData.Current.LocalFolder.Path;
             this.Loaded += delegate { this.Focus(FocusState.Programmatic); };
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(Recap));
+            this.Frame.Navigate(typeof(Recap),this.handler);
         }
 
         private void Quit()
@@ -59,33 +88,27 @@ namespace LearnNewWords
 
             picker.FileTypeFilter.Add(".dict");
 
-            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+            StorageFile file = await picker.PickSingleFileAsync();
             
             if (file != null)
             {
-                var handler = new ConceptHandler(file);
+                this.handler = new ConceptHandler(file);
+                await handler.ReadXML();
             }
             else
             {
-                ShowNoFileSelected();
+                MiscFunctions.MessageBox("Dictionary selection cancelled", "Dictionary left unchanged");
             }
-        }
-
-        private async void ShowNoFileSelected()
-        {
-            ContentDialog NoFileSelected = new ContentDialog()
-            {
-                Title = "Dictionary selection cancelled",
-                Content = "Dictionary left unchanged",
-                CloseButtonText = "Ok"
-            };
-
-            await NoFileSelected.ShowAsync();
         }
 
         private void Add_Words_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(AddNewWords));
+            this.Frame.Navigate(typeof(AddNewWords),this.handler);
+        }
+
+        private async void Hyperlink_Folder_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchFolderAsync(ApplicationData.Current.LocalFolder);
         }
     }
 }

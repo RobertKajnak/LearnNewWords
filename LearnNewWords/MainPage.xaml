@@ -16,5 +16,7 @@
         />
         <Button Name="Change_dict" Content="Change Dictionary" HorizontalAlignment="Center" Margin="0,150,0,0" VerticalAlignment="Center" Click="Change_dict_Click"/>
         <Button Name="Add_Words" Content="Add New Words" HorizontalAlignment="Center" Margin="0,300,0,0" VerticalAlignment="Center" Click="Add_Words_Click"/>
+        <TextBlock HorizontalAlignment="Left" Margin="100,00,230,5" Text="Current Folder: " TextWrapping="Wrap" VerticalAlignment="Bottom"/>
+        <HyperlinkButton Name="Hyperlink_Folder" Content="Open Directory"  HorizontalAlignment="Left" Margin="210,00,100,0" VerticalAlignment="Bottom" Click="Hyperlink_Folder_Click"/>
     </Grid>
 </Page>

@@ -22,6 +22,8 @@ namespace LearnNewWords
     /// </summary>
     public sealed partial class Recap : Page
     {
+        ConceptHandler handler;
+        List<Concept> concepts;
         public Recap()
         {
             this.InitializeComponent();
@@ -38,6 +40,16 @@ namespace LearnNewWords
         {
             base.OnNavigatedFrom(e);
 
+            if (e.Parameter is ConceptHandler)
+            {
+                this.handler = (ConceptHandler)e.Parameter;
+                this.concepts = handler.GetAllConcepts();
+            }
+            else
+            {
+                MiscFunctions.MessageBox("Unexpected Error", "Invalid concept list. Returning to main menu");
+                this.Frame.GoBack();
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

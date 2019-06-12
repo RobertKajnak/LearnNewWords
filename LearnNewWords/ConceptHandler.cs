@@ -92,7 +92,6 @@ namespace LearnNewWords
             {
                 this.words.Save(WindowsRuntimeStreamExtensions.AsStreamForWrite(stream));
             }
-            
         }
     }
 }
